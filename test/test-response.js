@@ -1,6 +1,3 @@
-// TODO: add support for following styles:
-// req.headers({some:header}).ok('done');
-
 var quickresponse = require('quickresponse');
 
 
