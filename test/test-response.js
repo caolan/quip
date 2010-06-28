@@ -136,8 +136,7 @@ exports.css = mimeTypeTest('text/css', 'css');
 exports.xml = mimeTypeTest('text/xml', 'xml');
 exports.atom = mimeTypeTest('application/atom+xml', 'atom');
 exports.rss = mimeTypeTest('application/rss+xml', 'rss');
-// should this be text/javscript for better browser support?
-exports.javascript = mimeTypeTest('application/javascript', 'javascript');
+exports.javascript = mimeTypeTest('text/javascript', 'javascript');
 exports.json = mimeTypeTest('application/json', 'json');
 
 
