@@ -6,6 +6,7 @@ var quickresponse = require('quickresponse');
 
 
 exports.status = function(test){
+    test.expect(4);
     var res = {};
     quickresponse()(null, res, function(){
         test.same(res.status(200), res);
@@ -54,23 +55,55 @@ exports.notAllowed = statusTest(405, 'notAllowed');
 // server error codes
 exports.error = statusTest(500, 'error');
 
-var redirectionTest = function(code, name){
+var redirectionTest = function(code, name, body){
     return function(test){
+        test.expect(5);
         var res = {};
         quickresponse()(null, res, function(){
-            test.same(res[name](), res);
-            test.equals(res._status, code);
-            res[name]('loc');
-            test.equals(res._headers.Location, 'loc');
+            res.send = function(data){
+                test.equals(res._status, code);
+                test.equals(res._headers.Location, 'loc');
+                test.equals(res._headers['Content-Type'], 'text/html');
+                test.equals(data, body);
+            };
+            test.equals(res[name]('loc'), null);
         });
         test.done();
     };
 };
 
 // redirection codes
-exports.notModified = statusTest(304, 'notModified');
-exports.moved = redirectionTest(301, 'moved');
-exports.redirect = redirectionTest(302, 'redirect');
+exports.moved = redirectionTest(301, 'moved',
+    '<html>' +
+        '<head><title>301 Moved Permanently</title></head>' +
+        '<body><p>Moved Permanently: <a href="loc">loc</a></p></body>' +
+    '</html>');
+exports.redirect = redirectionTest(302, 'redirect',
+    '<html>' +
+        '<head><title>302 Found</title></head>' +
+        '<body><p>Found: <a href="loc">loc</a></p></body>' +
+    '</html>');
+exports.found = redirectionTest(302, 'found',
+    '<html>' +
+        '<head><title>302 Found</title></head>' +
+        '<body><p>Found: <a href="loc">loc</a></p></body>' +
+    '</html>');
+
+exports.notModified = function(test){
+    test.expect(8);
+    var res = {};
+    quickresponse()(null, res, function(){
+        res.send = function(data){
+            test.equals(this._status, 304);
+            test.same(this._headers, {'Content-Type':'text/html'});
+            // 304 must not return body
+            test.equals(data, null);
+        };
+        test.equals(res.notModified(), null);
+        test.equals(res.notModified('content'), null);
+    });
+    test.done();
+};
 
 var mimeTypeTest = function(type, name){
     return function(test){
@@ -124,14 +157,14 @@ exports.send = function(test){
 };
 
 exports['send defaults'] = function(test){
-    test.expect(4);
+    test.expect(3);
     var res = {
         writeHead: function(code, headers){
             test.same(headers, {'Content-Type': 'text/html'});
             test.equals(code, 200);
         },
         write: function(data){
-            test.equals(data, '');
+            test.ok(false, 'should not be called if no data');
         },
         end: function(){
             test.ok(true, 'end called');
