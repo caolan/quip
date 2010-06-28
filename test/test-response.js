@@ -1,7 +1,11 @@
+// TODO: add support for following styles:
+// req.text().notFound('not found');
+// req.headers({some:header}).ok('done');
+
 var quickresponse = require('quickresponse');
 
 
-exports.testStatus = function(test){
+exports.status = function(test){
     var res = {};
     quickresponse()(null, res, function(){
         test.same(res.status(200), res);
@@ -15,30 +19,40 @@ exports.testStatus = function(test){
 
 var statusTest = function(code, name){
     return function(test){
+        test.expect(6);
         var res = {};
         quickresponse()(null, res, function(){
             test.same(res[name](), res);
             test.equals(res._status, code);
+        });
+        var res2 = {};
+        quickresponse()(null, res2, function(){
+            res2.send = function(data){
+                test.equals(this._status, code);
+                test.same(this._headers, {'Content-Type':'text/html'});
+                test.equals(data, 'content');
+            };
+            test.equals(res2[name]('content'), null);
         });
         test.done();
     };
 };
 
 // success codes
-exports.testOk = statusTest(200, 'ok');
-exports.testCreated = statusTest(201, 'created');
-exports.testAccepted= statusTest(202, 'accepted'); // remove this ???
+exports.ok = statusTest(200, 'ok');
+exports.created = statusTest(201, 'created');
+exports.accepted = statusTest(202, 'accepted'); // remove this ???
 
 // client error code
-exports.testBadRequest = statusTest(400, 'badRequest');
-exports.testForbidden = statusTest(403, 'forbidden');
-exports.testNotFound = statusTest(404, 'notFound');
-exports.testConflict = statusTest(409, 'conflict');
-exports.testGone = statusTest(410, 'gone');
-exports.testNotAllowed = statusTest(405, 'notAllowed');
+exports.badRequest = statusTest(400, 'badRequest');
+exports.forbidden = statusTest(403, 'forbidden');
+exports.notFound = statusTest(404, 'notFound');
+exports.conflict = statusTest(409, 'conflict');
+exports.gone = statusTest(410, 'gone');
+exports.notAllowed = statusTest(405, 'notAllowed');
 
 // server error codes
-exports.testError = statusTest(500, 'error');
+exports.error = statusTest(500, 'error');
 
 var redirectionTest = function(code, name){
     return function(test){
@@ -54,9 +68,9 @@ var redirectionTest = function(code, name){
 };
 
 // redirection codes
-exports.testNotModified = statusTest(304, 'notModified');
-exports.testMoved = redirectionTest(301, 'moved');
-exports.testRedirect = redirectionTest(302, 'redirect');
+exports.notModified = statusTest(304, 'notModified');
+exports.moved = redirectionTest(301, 'moved');
+exports.redirect = redirectionTest(302, 'redirect');
 
 var mimeTypeTest = function(type, name){
     return function(test){
@@ -74,20 +88,20 @@ var mimeTypeTest = function(type, name){
     };
 };
 
-exports.testText = mimeTypeTest('text/plain', 'plain');
-exports.testPlain = mimeTypeTest('text/plain', 'text');
-exports.testHtml = mimeTypeTest('text/html', 'html');
-exports.testXhtml = mimeTypeTest('application/xhtml+xml', 'xhtml');
-exports.testCss = mimeTypeTest('text/css', 'css');
-exports.testXml = mimeTypeTest('text/xml', 'xml');
-exports.testAtom = mimeTypeTest('application/atom+xml', 'atom');
-exports.testRss = mimeTypeTest('application/rss+xml', 'rss');
+exports.text = mimeTypeTest('text/plain', 'plain');
+exports.plain = mimeTypeTest('text/plain', 'text');
+exports.html = mimeTypeTest('text/html', 'html');
+exports.xhtml = mimeTypeTest('application/xhtml+xml', 'xhtml');
+exports.css = mimeTypeTest('text/css', 'css');
+exports.xml = mimeTypeTest('text/xml', 'xml');
+exports.atom = mimeTypeTest('application/atom+xml', 'atom');
+exports.rss = mimeTypeTest('application/rss+xml', 'rss');
 // should this be text/javscript for better browser support?
-exports.testJavascript = mimeTypeTest('application/javascript', 'javascript');
-exports.testJson = mimeTypeTest('application/json', 'json');
+exports.javascript = mimeTypeTest('application/javascript', 'javascript');
+exports.json = mimeTypeTest('application/json', 'json');
 
 
-exports.testSend = function(test){
+exports.send = function(test){
     test.expect(4);
     var res = {
         writeHead: function(code, headers){
@@ -109,11 +123,11 @@ exports.testSend = function(test){
     test.done();
 };
 
-exports.testSendDefaults = function(test){
+exports['send defaults'] = function(test){
     test.expect(4);
     var res = {
         writeHead: function(code, headers){
-            test.same(headers, {});
+            test.same(headers, {'Content-Type': 'text/html'});
             test.equals(code, 200);
         },
         write: function(data){
