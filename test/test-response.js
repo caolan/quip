@@ -126,7 +126,6 @@ exports.rss = mimeTypeTest('application/rss+xml', 'rss');
 exports.javascript = mimeTypeTest('text/javascript', 'javascript');
 exports.json = mimeTypeTest('application/json', 'json');
 
-
 exports.send = function(test){
     test.expect(4);
     var res = quickresponse.update({
@@ -162,6 +161,24 @@ exports['send defaults'] = function(test){
         }
     });
     res.send();
+    test.done();
+};
+
+exports['send object literal as json'] = function(test){
+    test.expect(6);
+    var res = quickresponse.update({
+        writeHead: function(code, headers){
+            test.ok(true, 'writeHead called');
+        },
+        write: function(data){
+            test.equals(data, '{"test":"object"}');
+        },
+        end: function(){
+            test.ok(true, 'end called');
+        }
+    });
+    res.json({test:'object'});
+    res.json().ok({test:'object'});
     test.done();
 };
 
