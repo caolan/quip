@@ -29,8 +29,8 @@ var statusTest = function(code, name){
         var res2 = {};
         quickresponse()(null, res2, function(){
             res2.send = function(data){
-                test.equals(this._status, code);
-                test.same(this._headers, {'Content-Type':'text/html'});
+                test.equals(res2._status, code);
+                test.same(res2._headers, {'Content-Type':'text/html'});
                 test.equals(data, 'content');
             };
             test.equals(res2[name]('content'), null);
@@ -94,8 +94,8 @@ exports.notModified = function(test){
     var res = {};
     quickresponse()(null, res, function(){
         res.send = function(data){
-            test.equals(this._status, 304);
-            test.same(this._headers, {'Content-Type':'text/html'});
+            test.equals(res._status, 304);
+            test.same(res._headers, {'Content-Type':'text/html'});
             // 304 must not return body
             test.equals(data, null);
         };
@@ -107,15 +107,23 @@ exports.notModified = function(test){
 
 var mimeTypeTest = function(type, name){
     return function(test){
-        test.expect(4);
+        test.expect(6);
         var res = {};
         quickresponse()(null, res, function(){
             res.send = function(data){
                 test.ok(true, 'send called');
-                test.equals(this._headers['Content-Type'], type);
+                test.equals(res._headers['Content-Type'], type);
                 test.equals(data, 'content');
             };
             test.equals(res[name]('content'), null);
+        });
+        var res2 = {};
+        quickresponse()(null, res2, function(){
+            res2.send = function(data){
+                test.ok(false, 'send should not be called');
+            };
+            test.equals(res2[name](), res2);
+            test.equals(res2._headers['Content-Type'], type);
         });
         test.done();
     };
