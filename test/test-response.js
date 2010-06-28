@@ -1,5 +1,4 @@
 // TODO: add support for following styles:
-// req.text().notFound('not found');
 // req.headers({some:header}).ok('done');
 
 var quickresponse = require('quickresponse');
@@ -180,6 +179,26 @@ exports['send defaults'] = function(test){
     };
     quickresponse()(null, res, function(){
         res.send();
+    });
+    test.done();
+};
+
+exports.headers = function(test){
+    test.expect(3);
+    var res = {};
+    quickresponse()(null, res, function(){
+        test.equals(res.headers({some:'header',test:'test'}), res);
+        test.same(res._headers, {
+            'Content-Type':'text/html',
+            some:'header',
+            test:'test'
+        });
+        res.headers({'Content-Type':'test'});
+        test.same(res._headers, {
+            'Content-Type':'test',
+            some:'header',
+            test:'test'
+        });
     });
     test.done();
 };
