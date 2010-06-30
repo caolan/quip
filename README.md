@@ -74,13 +74,13 @@ return an updated response object, allowing you to chain calls together.
 * res.created
 * res.accepted
 
-### Redirection
+#### Redirection
 * res.moved
 * res.redirect
 * res.found - alias for redirect
 * res.notModified
 
-### Client Error
+#### Client Error
 * res.badRequest
 * res.unauthorized
 * res.forbidden
@@ -89,10 +89,10 @@ return an updated response object, allowing you to chain calls together.
 * res.conflict
 * res.gone
 
-### Server Error
+#### Server Error
 * res.error
 
-## Mime Types
+### Mime Types
 
 By default, the response will have the mime-type text/html, this can
 be updated using the following methods. Note that by passing some data
