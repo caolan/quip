@@ -1,4 +1,4 @@
-# quickresponse
+# quip
 
 An exploration of a chainable API for response objects in node.
 
@@ -8,23 +8,28 @@ An exploration of a chainable API for response objects in node.
 
 ## Examples
 
-    // responding with different status codes
+#### responding with different status codes
+
     res.ok('<h1>Hello World!</h1>');
     res.notFound('Not found');
 
-    // responding with different mime types
+#### responding with different mime types
+
     res.text('plain text');
     res.json({'stringify': 'this object'});
 
-    // chaining the two together
-    res.error().json({error: 'something broke'});
-    res.xml().ok('<test></test>');
+#### chaining the two together (in any order)
 
-    // redirection
+    res.error().json({error: 'something broke'});
+    res.xml().badRequest('<test></test>');
+
+#### redirection
+
     res.moved('http://permanent/new/location');
     res.redirect('http://temporary/new/location');
 
-    // custom headers
+#### custom headers
+
     res.headers({'custom': 'header'}).text('some data');
 
 The response is completed when data is passed to a status code or mime-type
@@ -36,10 +41,10 @@ function, or when a redirect is performed.
 As a [Connect](http://github.com/extjs/Connect) filter:
 
     var Connect = require('connect'),
-        quickresponse = require('quickresponse'),
+        quip = require('quip'),
 
     Connect.createServer(
-        quickresponse.filter(),
+        quip.filter(),
         function(req, res, next){
             res.ok('test');
         }
@@ -47,11 +52,11 @@ As a [Connect](http://github.com/extjs/Connect) filter:
 
 Standalone, without Connect:
 
-    var quickresponse = require('quickresponse'),
+    var quip = require('quip'),
         http = require('http');
 
     http.createServer(function(req, res){
-        quickresponse.update(res);
+        quip.update(res);
         res.ok('test');
     });
 
