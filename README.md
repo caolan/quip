@@ -5,6 +5,10 @@ An exploration of a chainable API for response objects in node.
 * Suited to quick and easy prototyping
 * Works as a [Connect](http://github.com/extjs/Connect) filter
 
+Don't consider this a finished product, I'm just trying out some ideas, and
+thought I'd share what I have. I've been finding it useful to quickly put
+together APIs that respond with the correct status code and mime type.
+
 
 ## Examples
 
