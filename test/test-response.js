@@ -1,9 +1,9 @@
-var quickresponse = require('quickresponse');
+var quip = require('quip');
 
 
 exports.status = function(test){
     test.expect(4);
-    var res = quickresponse.update({});
+    var res = quip.update({});
     test.same(res.status(200), res);
     test.equals(res._status, 200);
     test.same(res.status(404), res);
@@ -16,11 +16,11 @@ var statusTest = function(code, name){
     return function(test){
         test.expect(6);
 
-        var res = quickresponse.update({});
+        var res = quip.update({});
         test.same(res[name](), res);
         test.equals(res._status, code);
 
-        var res2 = quickresponse.update({});
+        var res2 = quip.update({});
         res2.send = function(data){
             test.equals(res2._status, code);
             test.same(res2._headers, {'Content-Type':'text/html'});
@@ -50,7 +50,7 @@ exports.error = statusTest(500, 'error');
 var redirectionTest = function(code, name, body){
     return function(test){
         test.expect(5);
-        var res = quickresponse.update({});
+        var res = quip.update({});
         res.send = function(data){
             test.equals(res._status, code);
             test.equals(res._headers.Location, 'loc');
@@ -81,7 +81,7 @@ exports.found = redirectionTest(302, 'found',
 
 exports.notModified = function(test){
     test.expect(8);
-    var res = quickresponse.update({});
+    var res = quip.update({});
     res.send = function(data){
         test.equals(res._status, 304);
         test.same(res._headers, {'Content-Type':'text/html'});
@@ -97,7 +97,7 @@ var mimeTypeTest = function(type, name){
     return function(test){
         test.expect(6);
 
-        var res = quickresponse.update({});
+        var res = quip.update({});
         res.send = function(data){
             test.ok(true, 'send called');
             test.equals(res._headers['Content-Type'], type);
@@ -105,7 +105,7 @@ var mimeTypeTest = function(type, name){
         };
         test.equals(res[name]('content'), null);
 
-        var res2 = quickresponse.update({});
+        var res2 = quip.update({});
         res2.send = function(data){
             test.ok(false, 'send should not be called');
         };
@@ -128,7 +128,7 @@ exports.json = mimeTypeTest('application/json', 'json');
 
 exports.send = function(test){
     test.expect(4);
-    var res = quickresponse.update({
+    var res = quip.update({
         writeHead: function(code, headers){
             test.same(headers, {headers: 'test'});
             test.equals(code, 404);
@@ -148,7 +148,7 @@ exports.send = function(test){
 
 exports['send defaults'] = function(test){
     test.expect(3);
-    var res = quickresponse.update({
+    var res = quip.update({
         writeHead: function(code, headers){
             test.same(headers, {'Content-Type': 'text/html'});
             test.equals(code, 200);
@@ -166,7 +166,7 @@ exports['send defaults'] = function(test){
 
 exports['send object literal as json'] = function(test){
     test.expect(6);
-    var res = quickresponse.update({
+    var res = quip.update({
         writeHead: function(code, headers){
             test.ok(true, 'writeHead called');
         },
@@ -184,7 +184,7 @@ exports['send object literal as json'] = function(test){
 
 exports.headers = function(test){
     test.expect(3);
-    var res = quickresponse.update({});
+    var res = quip.update({});
     test.equals(res.headers({some:'header',test:'test'}), res);
     test.same(res._headers, {
         'Content-Type':'text/html',
@@ -204,14 +204,14 @@ exports.filter = function(test){
     test.expect(2);
 
     var res = {test:'response'};
-    var _update = quickresponse.update;
-    quickresponse.update = function(r){
+    var _update = quip.update;
+    quip.update = function(r){
         test.equals(r, res);
     };
-    quickresponse.filter()(null, res, function(){
+    quip.filter()(null, res, function(){
         test.ok(true, 'next called');
     });
 
-    quickresponse.update = _update;
+    quip.update = _update;
     test.done();
 };
