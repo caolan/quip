@@ -118,3 +118,10 @@ return an updated response object, allowing you to chain calls together.
 * res.rss
 * res.javascript
 * res.json
+
+* res.jsonp -- JSONP is a special case that __always__ completes the request,
+  and overrides any previous status code calls. There is no reliable way for
+  a browser to interpret JSONP responses with a status code other than 200.
+  Any error or status information should be included in the JSONP response
+  itself. The jsonp method accepts 2 arguments, a callback name (string) and
+  some JSON data (either a string or an object literal).

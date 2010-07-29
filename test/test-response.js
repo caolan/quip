@@ -215,3 +215,19 @@ exports.filter = function(test){
     quip.update = _update;
     test.done();
 };
+
+exports.jsonp = function(test){
+    test.expect(7);
+    var res = quip.update({});
+    res.send = function(data){
+        test.equals(data, 'mycallback({"some":"data"});');
+        test.equals(res._status, 200);
+        test.same(res._headers, {'Content-Type':'text/javascript'});
+    };
+    var r = res.jsonp('mycallback', {'some':'data'});
+    test.equals(r, null); //should not allow further chaining
+
+    // status code should be overridden
+    res.error().jsonp('mycallback', {'some':'data'});
+    test.done();
+};
