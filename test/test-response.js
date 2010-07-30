@@ -126,6 +126,22 @@ exports.rss = mimeTypeTest('application/rss+xml', 'rss');
 exports.javascript = mimeTypeTest('text/javascript', 'javascript');
 exports.json = mimeTypeTest('application/json', 'json');
 
+exports.jsonp = function(test){
+    test.expect(7);
+    var res = quip.update({});
+    res.send = function(data){
+        test.equals(data, 'mycallback({"some":"data"});');
+        test.equals(res._status, 200);
+        test.same(res._headers, {'Content-Type':'text/javascript'});
+    };
+    var r = res.jsonp('mycallback', {'some':'data'});
+    test.equals(r, null); //should not allow further chaining
+
+    // status code should be overridden
+    res.error().jsonp('mycallback', {'some':'data'});
+    test.done();
+};
+
 exports.send = function(test){
     test.expect(4);
     var res = quip.update({
@@ -208,26 +224,10 @@ exports.filter = function(test){
     quip.update = function(r){
         test.equals(r, res);
     };
-    quip.filter()(null, res, function(){
+    quip()(null, res, function(){
         test.ok(true, 'next called');
     });
 
     quip.update = _update;
-    test.done();
-};
-
-exports.jsonp = function(test){
-    test.expect(7);
-    var res = quip.update({});
-    res.send = function(data){
-        test.equals(data, 'mycallback({"some":"data"});');
-        test.equals(res._status, 200);
-        test.same(res._headers, {'Content-Type':'text/javascript'});
-    };
-    var r = res.jsonp('mycallback', {'some':'data'});
-    test.equals(r, null); //should not allow further chaining
-
-    // status code should be overridden
-    res.error().jsonp('mycallback', {'some':'data'});
     test.done();
 };

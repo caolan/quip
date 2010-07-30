@@ -48,7 +48,7 @@ As a [Connect](http://github.com/extjs/Connect) filter:
         quip = require('quip'),
 
     Connect.createServer(
-        quip.filter(),
+        quip(),
         function(req, res, next){
             res.ok('test');
         }
