@@ -1,0 +1,16 @@
+{ "name": "quip"
+, "description": "A chainable API for response objects in node"
+, "main": "./index"
+, "author": "Caolan McMahon"
+, "version": "0.0.1"
+, "repository" :
+  { "type" : "git"
+  , "url" : "http://github.com/caolan/quip.git"
+  }
+, "bugs" : { "web" : "http://github.com/caolan/quip/issues" }
+, "licenses" :
+  [ { "type" : "MIT"
+    , "url" : "http://github.com/caolan/quip/raw/master/LICENSE"
+    }
+  ]
+}
