@@ -5,9 +5,9 @@ exports.status = function(test){
     test.expect(4);
     var res = quip.update({});
     test.same(res.status(200), res);
-    test.equals(res._status, 200);
+    test.equals(res._quip_status, 200);
     test.same(res.status(404), res);
-    test.equals(res._status, 404);
+    test.equals(res._quip_status, 404);
     test.done();
 };
 
@@ -18,12 +18,12 @@ var statusTest = function(code, name){
 
         var res = quip.update({});
         test.same(res[name](), res);
-        test.equals(res._status, code);
+        test.equals(res._quip_status, code);
 
         var res2 = quip.update({});
         res2.send = function(data){
-            test.equals(res2._status, code);
-            test.same(res2._headers, {'Content-Type':'text/html'});
+            test.equals(res2._quip_status, code);
+            test.same(res2._quip_headers, {'Content-Type':'text/html'});
             test.equals(data, 'content');
         };
         test.equals(res2[name]('content'), null);
@@ -52,9 +52,9 @@ var redirectionTest = function(code, name, body){
         test.expect(5);
         var res = quip.update({});
         res.send = function(data){
-            test.equals(res._status, code);
-            test.equals(res._headers.Location, 'loc');
-            test.equals(res._headers['Content-Type'], 'text/html');
+            test.equals(res._quip_status, code);
+            test.equals(res._quip_headers.Location, 'loc');
+            test.equals(res._quip_headers['Content-Type'], 'text/html');
             test.equals(data, body);
         };
         test.equals(res[name]('loc'), null);
@@ -83,8 +83,8 @@ exports.notModified = function(test){
     test.expect(8);
     var res = quip.update({});
     res.send = function(data){
-        test.equals(res._status, 304);
-        test.same(res._headers, {'Content-Type':'text/html'});
+        test.equals(res._quip_status, 304);
+        test.same(res._quip_headers, {'Content-Type':'text/html'});
         // 304 must not return body
         test.equals(data, null);
     };
@@ -100,7 +100,7 @@ var mimeTypeTest = function(type, name){
         var res = quip.update({});
         res.send = function(data){
             test.ok(true, 'send called');
-            test.equals(res._headers['Content-Type'], type);
+            test.equals(res._quip_headers['Content-Type'], type);
             test.equals(data, 'content');
         };
         test.equals(res[name]('content'), null);
@@ -110,7 +110,7 @@ var mimeTypeTest = function(type, name){
             test.ok(false, 'send should not be called');
         };
         test.equals(res2[name](), res2);
-        test.equals(res2._headers['Content-Type'], type);
+        test.equals(res2._quip_headers['Content-Type'], type);
         test.done();
     };
 };
@@ -131,8 +131,8 @@ exports.jsonp = function(test){
     var res = quip.update({});
     res.send = function(data){
         test.equals(data, 'mycallback({"some":"data"});');
-        test.equals(res._status, 200);
-        test.same(res._headers, {'Content-Type':'text/javascript'});
+        test.equals(res._quip_status, 200);
+        test.same(res._quip_headers, {'Content-Type':'text/javascript'});
     };
     var r = res.jsonp('mycallback', {'some':'data'});
     test.equals(r, null); //should not allow further chaining
@@ -156,8 +156,8 @@ exports.send = function(test){
             test.ok(true, 'end called');
         }
     });
-    res._headers = {headers: 'test'};
-    res._status = 404;
+    res._quip_headers = {headers: 'test'};
+    res._quip_status = 404;
     res.send('data');
     test.done();
 };
@@ -202,13 +202,13 @@ exports.headers = function(test){
     test.expect(3);
     var res = quip.update({});
     test.equals(res.headers({some:'header',test:'test'}), res);
-    test.same(res._headers, {
+    test.same(res._quip_headers, {
         'Content-Type':'text/html',
         some:'header',
         test:'test'
     });
     res.headers({'Content-Type':'test'});
-    test.same(res._headers, {
+    test.same(res._quip_headers, {
         'Content-Type':'test',
         some:'header',
         test:'test'
