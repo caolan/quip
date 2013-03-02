@@ -2,7 +2,7 @@
 , "description": "A chainable API for response objects in node"
 , "main": "./index"
 , "author": "Caolan McMahon"
-, "version": "0.0.3"
+, "version": "0.0.4"
 , "repository" :
   { "type" : "git"
   , "url" : "http://github.com/caolan/quip.git"
