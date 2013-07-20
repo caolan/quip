@@ -89,7 +89,6 @@ Enable for all response objects by using quip as a
 
 * headers - add custom headers to response, returns updated response object
 * status - set status code of response manually, returns updated response
-* send - send data with the status code and headers already set, returns null
 
 ### Status Codes
 
