@@ -7,10 +7,6 @@ A convenient chainable API for HTTP ServerResponse objects in node.
 * Allows you to pipe streams to the response, while easily setting up
   the headers and status code beforehand
 
-Don't consider this a finished product, I'm just trying out some ideas, and
-thought I'd share what I have. I've been finding it useful to quickly put
-together APIs that respond with the correct status code and mime type.
-
 
 ## Examples
 
