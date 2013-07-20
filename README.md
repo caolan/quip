@@ -42,27 +42,27 @@ function, or when a redirect is performed.
 
 ## Usage
 
-As a [Connect](http://github.com/extjs/Connect) filter:
-
-    var Connect = require('connect'),
-        quip = require('quip'),
-
-    Connect.createServer(
-        quip(),
-        function(req, res, next){
-            res.ok('test');
-        }
-    ).listen(8080);
-
-Standalone, without Connect:
+Use quip for specific responses:
 
     var quip = require('quip'),
         http = require('http');
 
     http.createServer(function(req, res){
-        quip.update(res);
-        res.ok('test');
+        quip(res).ok('test');
     });
+
+Enable for all response objects by using quip as a
+[Connect](http://www.senchalabs.org/connect/) middleware:
+
+    var connect = require('connect'),
+        quip = require('quip'),
+
+    var app = connect(
+        quip,
+        function (req, res, next) {
+            res.ok('test');
+        }
+    );
 
 
 ## API
@@ -76,7 +76,9 @@ Standalone, without Connect:
 By default, the response will have the status code 200 (OK), this can
 be updated using the following methods. Note that by passing some data
 to these methods, the response will complete. If you don't pass data it will
-return an updated response object, allowing you to chain calls together.
+return an updated response object, allowing you to chain calls together. If
+the data passed is an object then it will be treated as JSON and the mime
+type of the response will be updated accordingly.
 
 #### Success
 * res.ok
@@ -107,6 +109,8 @@ By default, the response will have the mime-type text/html, this can
 be updated using the following methods. Note that by passing some data
 to these methods, the response will complete. If you don't pass data it will
 return an updated response object, allowing you to chain calls together.
+You can pass an object to the json and jsonp methods and it will be
+stringified before sending.
 
 * res.text
 * res.plain
