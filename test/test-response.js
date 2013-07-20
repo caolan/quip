@@ -1,4 +1,4 @@
-var quip = require('quip');
+var quip = require('../lib/quip');
 
 
 exports.status = function(test){
@@ -146,7 +146,10 @@ exports.send = function(test){
     test.expect(4);
     var res = quip.update({
         writeHead: function(code, headers){
-            test.same(headers, {headers: 'test'});
+            test.same(headers, {
+                headers: 'test',
+                'Content-Length': 4
+            });
             test.equals(code, 404);
         },
         write: function(data){

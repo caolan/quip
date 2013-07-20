@@ -1,16 +1,26 @@
-{ "name": "quip"
-, "description": "A chainable API for response objects in node"
-, "main": "./index"
-, "author": "Caolan McMahon"
-, "version": "0.0.4"
-, "repository" :
-  { "type" : "git"
-  , "url" : "http://github.com/caolan/quip.git"
-  }
-, "bugs" : { "url" : "http://github.com/caolan/quip/issues" }
-, "licenses" :
-  [ { "type" : "MIT"
-    , "url" : "http://github.com/caolan/quip/raw/master/LICENSE"
+{
+    "name": "quip",
+    "description": "A chainable API for response objects in node",
+    "version": "0.0.4",
+    "devDependencies": {
+        "nodeunit": "0.8.1"
+    },
+    "main": "./lib/quip",
+    "author": "Caolan McMahon",
+    "repository": {
+        "type": "git",
+        "url" : "http://github.com/caolan/quip.git"
+    },
+    "bugs": {
+        "url": "http://github.com/caolan/quip/issues"
+    },
+    "licenses": [
+        {
+            "type": "MIT",
+            "url": "http://github.com/caolan/quip/raw/master/LICENSE"
+        }
+    ],
+    "scripts": {
+        "test": "node_modules/.bin/nodeunit test"
     }
-  ]
 }
