@@ -1,4 +1,6 @@
-var quip = require('../lib/quip');
+var quip = require('../lib/quip'),
+    http = require('http'),
+    fs = require('fs');
 
 
 exports.status = function(test){
@@ -45,6 +47,7 @@ exports.accepted = statusTest(202, 'accepted'); // remove this ???
 // client error code
 exports.badRequest = statusTest(400, 'badRequest');
 exports.forbidden = statusTest(403, 'forbidden');
+exports.unauthorized = statusTest(401, 'unauthorized');
 exports.notFound = statusTest(404, 'notFound');
 exports.conflict = statusTest(409, 'conflict');
 exports.gone = statusTest(410, 'gone');
@@ -178,28 +181,32 @@ exports.send = function(test){
 };
 
 exports['send defaults'] = function(test){
-    test.expect(3);
+    test.expect(4);
     var res = quip({
         writeHead: function(code, headers){
-            test.same(headers, {'Content-Type': 'text/html'});
+            test.same(headers, {
+                'Content-Type': 'text/html',
+                'Content-Length': 4
+            });
             test.equals(code, 200);
         },
         write: function(data){
-            test.ok(false, 'should not be called if no data');
+            test.equal(data, 'test');
         },
         end: function(){
             test.ok(true, 'end called');
         }
     });
-    res.send();
+    res.send('test');
     test.done();
 };
 
 exports['send object literal as json'] = function(test){
-    test.expect(6);
-    var res = quip({
+    test.expect(8);
+    var res1 = quip({
         writeHead: function(code, headers){
-            test.ok(true, 'writeHead called');
+            test.equal(code, 200);
+            test.equal(headers['Content-Type'], 'application/json');
         },
         write: function(data){
             test.equals(data, '{"test":"object"}');
@@ -208,8 +215,20 @@ exports['send object literal as json'] = function(test){
             test.ok(true, 'end called');
         }
     });
-    res.json({test:'object'});
-    res.json().ok({test:'object'});
+    res1.json({test:'object'});
+    var res2 = quip({
+        writeHead: function(code, headers){
+            test.equal(code, 200);
+            test.equal(headers['Content-Type'], 'application/json');
+        },
+        write: function(data){
+            test.equals(data, '{"test":"object"}');
+        },
+        end: function(){
+            test.ok(true, 'end called');
+        }
+    });
+    res2.json().ok({test:'object'});
     test.done();
 };
 
@@ -296,4 +315,27 @@ exports['default mime type is html for Buffers'] = function (test) {
         }
     });
     res.ok(new Buffer('content'));
+};
+
+exports['pipe data to extended response object'] = function (test) {
+    test.expect(3);
+    var filename = __dirname + '/../package.json';
+    var server = http.createServer(function (req, res) {
+        var read = fs.createReadStream(filename);
+        read.pipe(quip(res).unauthorized().json());
+    });
+    server.listen(8888);
+    http.get('http://127.0.0.1:8888', function (res) {
+        test.equal(res.statusCode, 401);
+        test.equal(res.headers['content-type'], 'application/json');
+        var buffer = '';
+        res.on('data', function (chunk) {
+            buffer += chunk.toString();
+        });
+        res.on('error', test.done);
+        res.on('end', function () {
+            test.equal(buffer, fs.readFileSync(filename).toString());
+            server.close(test.done);
+        });
+    });
 };
