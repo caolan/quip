@@ -219,18 +219,13 @@ exports.headers = function(test){
     test.done();
 };
 
-exports.filter = function(test){
-    test.expect(2);
-
+exports.middleware = function(test){
+    test.expect(3);
     var res = {test:'response'};
-    var _update = quip.update;
-    quip.update = function(r){
-        test.equals(r, res);
-    };
     quip()(null, res, function(){
+        test.ok(res.json);
+        test.ok(res.jsonp);
         test.ok(true, 'next called');
     });
-
-    quip.update = _update;
     test.done();
 };
