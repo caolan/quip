@@ -1,9 +1,11 @@
 # quip
 
-An exploration of a chainable API for response objects in node.
+A convenient chainable API for HTTP ServerResponse objects in node.
 
 * Suited to quick and easy prototyping
-* Works as a [Connect](http://github.com/extjs/Connect) filter
+* Works as a [Connect](http://github.com/extjs/Connect) middleware
+* Allows you to pipe streams to the response, while easily setting up
+  the headers and status code beforehand
 
 Don't consider this a finished product, I'm just trying out some ideas, and
 thought I'd share what I have. I've been finding it useful to quickly put
@@ -65,8 +67,8 @@ Use quip for specific responses:
     var quip = require('quip'),
         http = require('http');
 
-    http.createServer(function(req, res){
-        quip(res).ok('test');
+    http.createServer(function (req, res) {
+        quip(res).ok('example');
     });
 
 Enable for all response objects by using quip as a
@@ -78,7 +80,7 @@ Enable for all response objects by using quip as a
     var app = connect(
         quip,
         function (req, res, next) {
-            res.ok('test');
+            res.ok('example');
         }
     );
 
