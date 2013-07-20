@@ -1,7 +1,7 @@
 {
     "name": "quip",
     "description": "A chainable API for response objects in node",
-    "version": "0.0.4",
+    "version": "0.1.0",
     "devDependencies": {
         "nodeunit": "0.8.1"
     },
