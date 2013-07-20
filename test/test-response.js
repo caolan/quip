@@ -259,3 +259,41 @@ exports['default mime type is json when obj as data'] = function (test) {
     });
     res.ok({foo: 'bar'});
 };
+
+exports['default mime type is html for strings'] = function (test) {
+    test.expect(2);
+    var res = quip({
+        writeHead: function(code, headers){
+            test.same(headers, {
+                'Content-Type': 'text/html',
+                'Content-Length': 7
+            });
+        },
+        write: function(data){
+            test.equals(data, 'content');
+        },
+        end: function(){
+            test.done();
+        }
+    });
+    res.ok('content');
+};
+
+exports['default mime type is html for Buffers'] = function (test) {
+    test.expect(2);
+    var res = quip({
+        writeHead: function(code, headers){
+            test.same(headers, {
+                'Content-Type': 'text/html',
+                'Content-Length': 7
+            });
+        },
+        write: function(data){
+            test.equals(data.toString(), 'content');
+        },
+        end: function(){
+            test.done();
+        }
+    });
+    res.ok(new Buffer('content'));
+};
