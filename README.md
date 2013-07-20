@@ -14,30 +14,48 @@ together APIs that respond with the correct status code and mime type.
 
 #### responding with different status codes
 
-    res.ok('<h1>Hello World!</h1>');
-    res.notFound('Not found');
+```javascript
+res.ok('<h1>Hello World!</h1>');
+res.notFound('Not found');
+```
 
 #### responding with different mime types
 
-    res.text('plain text');
-    res.json({'stringify': 'this object'});
+```javascript
+res.text('plain text');
+res.json({'stringify': 'this object'});
+```
 
 #### chaining the two together (in any order)
 
-    res.error().json({error: 'something broke'});
-    res.xml().badRequest('<test></test>');
+```javascript
+res.error().json({error: 'something broke'});
+res.xml().badRequest('<test></test>');
+```
 
 #### redirection
 
-    res.moved('http://permanent/new/location');
-    res.redirect('http://temporary/new/location');
+```javascript
+res.moved('http://permanent/new/location');
+res.redirect('http://temporary/new/location');
+```
 
 #### custom headers
 
-    res.headers({'custom': 'header'}).text('some data');
+```javascript
+res.headers({'custom': 'header'}).text('some data');
+```
+
+#### piping data to a response object
+
+```javascript
+var feed = fs.createReadStream('posts.xml');
+feed.pipe(res.atom());
+```
 
 The response is completed when data is passed to a status code or mime-type
-function, or when a redirect is performed.
+function, when a redirect is performed, or when a stream is piped to the
+response.
 
 
 ## Usage
