@@ -3,7 +3,7 @@ var quip = require('../lib/quip'),
     fs = require('fs');
 
 
-exports.status = function(test){
+exports.status = function (test) {
     test.expect(4);
     var res = quip({});
     test.same(res.status(200), res);
@@ -14,8 +14,8 @@ exports.status = function(test){
 };
 
 
-var statusTest = function(code, name){
-    return function(test){
+var statusTest = function (code, name) {
+    return function (test) {
         test.expect(7);
 
         var res = quip({});
@@ -23,15 +23,15 @@ var statusTest = function(code, name){
         test.equal(res._quip_status, code);
 
         var res2 = quip({
-            writeHead: function(c, headers){
+            writeHead: function (c, headers) {
                 test.equal(code, c);
                 test.equal(headers['Content-Type'], 'text/html');
                 test.equal(headers['Content-Length'], 7);
             },
-            write: function(data){
+            write: function (data) {
                 test.equal(data, 'content');
             },
-            end: function(){
+            end: function () {
                 process.nextTick(test.done);
             }
         });
@@ -56,19 +56,19 @@ exports.notAllowed = statusTest(405, 'notAllowed');
 // server error codes
 exports.error = statusTest(500, 'error');
 
-var redirectionTest = function(code, name, body){
-    return function(test){
+var redirectionTest = function (code, name, body) {
+    return function (test) {
         test.expect(5);
         var res = quip({
-            writeHead: function(c, headers){
+            writeHead: function (c, headers) {
                 test.equal(code, c);
                 test.equal(headers['Location'], 'loc');
                 test.equal(headers['Content-Type'], 'text/html');
             },
-            write: function(data){
+            write: function (data) {
                 test.equal(data, body);
             },
-            end: function(){
+            end: function () {
                 process.nextTick(test.done);
             }
         });
@@ -93,10 +93,10 @@ exports.found = redirectionTest(302, 'found',
         '<body><p>Found: <a href="loc">loc</a></p></body>' +
     '</html>');
 
-exports.notModified = function(test){
+exports.notModified = function (test) {
     test.expect(8);
     var res = quip({});
-    res.send = function(data){
+    res.send = function (data) {
         test.equals(res._quip_status, 304);
         test.same(res._quip_headers, {});
         // 304 must not return body
@@ -107,8 +107,8 @@ exports.notModified = function(test){
     test.done();
 };
 
-var mimeTypeTest = function(type, name){
-    return function(test){
+var mimeTypeTest = function (type, name) {
+    return function (test) {
         test.expect(6);
 
         var res = quip({});
@@ -140,10 +140,10 @@ exports.rss = mimeTypeTest('application/rss+xml', 'rss');
 exports.javascript = mimeTypeTest('text/javascript', 'javascript');
 exports.json = mimeTypeTest('application/json', 'json');
 
-exports.jsonp = function(test){
+exports.jsonp = function (test) {
     test.expect(7);
     var res = quip({});
-    res.send = function(data){
+    res.send = function (data) {
         test.equals(data, 'mycallback({"some":"data"});');
         test.equals(res._quip_status, 200);
         test.same(res._quip_headers, {'Content-Type':'text/javascript'});
@@ -156,10 +156,10 @@ exports.jsonp = function(test){
     test.done();
 };
 
-exports.send = function(test){
+exports.send = function (test) {
     test.expect(4);
     var res = quip({
-        writeHead: function(code, headers){
+        writeHead: function (code, headers) {
             test.same(headers, {
                 headers: 'test',
                 'Content-Type': 'text/html',
@@ -167,10 +167,10 @@ exports.send = function(test){
             });
             test.equals(code, 404);
         },
-        write: function(data){
+        write: function (data) {
             test.equals(data, 'data');
         },
-        end: function(){
+        end: function () {
             test.ok(true, 'end called');
         }
     });
@@ -180,20 +180,20 @@ exports.send = function(test){
     test.done();
 };
 
-exports['send defaults'] = function(test){
+exports['send defaults'] = function (test) {
     test.expect(4);
     var res = quip({
-        writeHead: function(code, headers){
+        writeHead: function (code, headers) {
             test.same(headers, {
                 'Content-Type': 'text/html',
                 'Content-Length': 4
             });
             test.equals(code, 200);
         },
-        write: function(data){
+        write: function (data) {
             test.equal(data, 'test');
         },
-        end: function(){
+        end: function () {
             test.ok(true, 'end called');
         }
     });
@@ -201,30 +201,30 @@ exports['send defaults'] = function(test){
     test.done();
 };
 
-exports['send object literal as json'] = function(test){
+exports['send object literal as json'] = function (test) {
     test.expect(8);
     var res1 = quip({
-        writeHead: function(code, headers){
+        writeHead: function (code, headers) {
             test.equal(code, 200);
             test.equal(headers['Content-Type'], 'application/json');
         },
-        write: function(data){
+        write: function (data) {
             test.equals(data, '{"test":"object"}');
         },
-        end: function(){
+        end: function () {
             test.ok(true, 'end called');
         }
     });
     res1.json({test:'object'});
     var res2 = quip({
-        writeHead: function(code, headers){
+        writeHead: function (code, headers) {
             test.equal(code, 200);
             test.equal(headers['Content-Type'], 'application/json');
         },
-        write: function(data){
+        write: function (data) {
             test.equals(data, '{"test":"object"}');
         },
-        end: function(){
+        end: function () {
             test.ok(true, 'end called');
         }
     });
@@ -232,7 +232,7 @@ exports['send object literal as json'] = function(test){
     test.done();
 };
 
-exports.headers = function(test){
+exports.headers = function (test) {
     test.expect(3);
     var res = quip({});
     test.equals(res.headers({some:'header',test:'test'}), res);
@@ -249,10 +249,10 @@ exports.headers = function(test){
     test.done();
 };
 
-exports.middleware = function(test){
+exports.middleware = function (test) {
     test.expect(3);
     var res = {test:'response'};
-    quip(null, res, function(){
+    quip(null, res, function () {
         test.ok(res.json);
         test.ok(res.jsonp);
         test.ok(true, 'next called');
@@ -263,16 +263,16 @@ exports.middleware = function(test){
 exports['default mime type is json when obj as data'] = function (test) {
     test.expect(2);
     var res = quip({
-        writeHead: function(code, headers){
+        writeHead: function (code, headers) {
             test.same(headers, {
                 'Content-Type': 'application/json',
                 'Content-Length': 13
             });
         },
-        write: function(data){
+        write: function (data) {
             test.equals(data, JSON.stringify({foo: 'bar'}));
         },
-        end: function(){
+        end: function () {
             test.done();
         }
     });
@@ -282,16 +282,16 @@ exports['default mime type is json when obj as data'] = function (test) {
 exports['default mime type is html for strings'] = function (test) {
     test.expect(2);
     var res = quip({
-        writeHead: function(code, headers){
+        writeHead: function (code, headers) {
             test.same(headers, {
                 'Content-Type': 'text/html',
                 'Content-Length': 7
             });
         },
-        write: function(data){
+        write: function (data) {
             test.equals(data, 'content');
         },
-        end: function(){
+        end: function () {
             test.done();
         }
     });
@@ -301,16 +301,16 @@ exports['default mime type is html for strings'] = function (test) {
 exports['default mime type is html for Buffers'] = function (test) {
     test.expect(2);
     var res = quip({
-        writeHead: function(code, headers){
+        writeHead: function (code, headers) {
             test.same(headers, {
                 'Content-Type': 'text/html',
                 'Content-Length': 7
             });
         },
-        write: function(data){
+        write: function (data) {
             test.equals(data.toString(), 'content');
         },
-        end: function(){
+        end: function () {
             test.done();
         }
     });
