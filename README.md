@@ -47,6 +47,7 @@ res.headers({'custom': 'header'}).text('some data');
 #### piping data to a response object
 
 ```javascript
+// read posts.xml and pipe to response with mime type application/atom+xml
 var feed = fs.createReadStream('posts.xml');
 feed.pipe(res.atom());
 ```
