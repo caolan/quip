@@ -339,3 +339,32 @@ exports['pipe data to extended response object'] = function (test) {
         });
     });
 };
+
+exports['custom mime types'] = function (test) {
+    test.expect(10);
+    var type = 'application/x-whatever';
+
+    var res = quip({});
+    res.send = function(data){
+        test.ok(true, 'send called');
+        test.equals(res._quip_headers['Content-Type'], type);
+        test.equals(data, 'content');
+    };
+    test.equals(res.mime(type).ok('content'), null);
+
+    var res2 = quip({});
+    res2.send = function(data){
+        test.ok(true, 'send called');
+        test.equals(res2._quip_headers['Content-Type'], type);
+        test.equals(data, 'content');
+    };
+    test.equals(res2.mime(type, 'content'), null);
+
+    var res3 = quip({});
+    res3.send = function(data){
+        test.ok(false, 'send should not be called');
+    };
+    test.equals(res3.mime(type), res3);
+    test.equals(res3._quip_headers['Content-Type'], type);
+    test.done();
+};
