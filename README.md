@@ -100,6 +100,7 @@ type of the response will be updated accordingly.
 * res.ok
 * res.created
 * res.accepted
+* res.noContent
 
 #### Redirection
 * res.moved
